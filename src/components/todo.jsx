@@ -49,14 +49,14 @@ const todo = ({todos,deleteSingleTodo, updateSingleTodo,updateId}) => {
                   <button
                     onClick={() => updateTodo(todo._id,index)}
                     type="button"
-                    class="btn btn-info"
+                    className="btn btn-info"
                   >
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
                   <button
                      onClick={() => deleteTodo(todo._id)}
                     type="button"
-                    class="btn btn-danger"
+                    className="btn btn-danger"
                   >
                     <i class="fa-solid fa-trash"></i>
                   </button>

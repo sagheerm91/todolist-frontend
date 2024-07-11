@@ -20,7 +20,7 @@ const updateTodo = async ({updateTodoId}) => {
     <h3>ToDos List</h3>
       <div className="input-div">
       <input  type="text" name="task" placeholder="Add New To-Do" />
-        <button type="button" class="btn btn-primary">
+        <button type="button" className="btn btn-primary">
         Add 
       </button>
       </div>

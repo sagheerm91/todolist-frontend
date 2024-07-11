@@ -73,7 +73,7 @@ const GetTodos = () => {
         setTodos([...todos, res.todo]);
         setTodo({ task: "" });
       } catch (error) {
-        toast.error(error.message, { position: "top-right" });
+        toast.error(error.response?.data?.message || error.message, { position: "top-right" });
       }
     }
   };

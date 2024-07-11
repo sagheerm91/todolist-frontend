@@ -1,4 +1,3 @@
-import axios from "axios";
 import instance from "./todoInterceptor";
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
@@ -15,16 +14,19 @@ const instance = axios.create({
 class todoService {
   async getAllTodos() {
     try {
-      const response = await instance.get(`${baseUrl}/get-todos`);
+      const response = await instance.get(`${baseUrl}/todos/get-todos`);
       return response.data.data;
     } catch (error) {
-      console.log("Error while fetching the record", error);
+      if (error.response && error.response.status === 409) {
+        return { error: "Task already exists" };
+      }
+      return { error: "Error creating todo" };
     }
   }
 
   async createTodo({ todo }) {
       const response = await instance.post(
-        `${baseUrl}/create-todo`,
+        `${baseUrl}/todos/create-todo`,
         todo
       );
 
@@ -34,7 +36,7 @@ class todoService {
   async updateTodo({ updateId, todo }) {
     try {
       const res = await instance.put(
-        `${baseUrl}/update-todo/${updateId}`,
+        `${baseUrl}/todos/update-todo/${updateId}`,
         todo
       );
 
@@ -50,7 +52,7 @@ class todoService {
   async deleteTodo({ id }) {
     try {
       const response = await instance.delete(
-        `${baseUrl}/delete-todo/` + id
+        `${baseUrl}/todos/delete-todo/` + id
       );
       return response;
     } catch (error) {
