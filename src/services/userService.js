@@ -11,6 +11,11 @@ class userService{
     
           return response;
     }
+
+    async login({user}){
+        const response = await instance.post(`${baseUrl}/users/login`, user);
+        return response;
+    }
 }
 
 export default new userService();

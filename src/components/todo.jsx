@@ -14,6 +14,7 @@ const todo = ({todos,deleteSingleTodo, updateSingleTodo,updateId}) => {
             }
           } catch (error) {
             console.log("Error while deleting the record", error);
+            toast.error(error.response?.data?.message || error.message, { position: "top-right" });
           }
     };
     const updateTodo = async (id,index) => {

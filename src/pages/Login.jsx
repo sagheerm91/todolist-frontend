@@ -1,5 +1,10 @@
-import { React, useState, useNavigate } from "react";
+import { React, useState } from "react";
 import "./Register.css"
+import { Link } from "react-router-dom";
+import userService from "../services/userService";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../store/tokenStore";
 
 export const Login = () => {
   const [user, setUser] = useState({
@@ -7,7 +12,8 @@ export const Login = () => {
     password: "",
   });
 
-  // const navigate = useNavigate();
+const navigate = useNavigate();
+const {storeToken} = useAuth();
 
   // let handle the input field value
   const handleInput = (e) => {
@@ -20,9 +26,22 @@ export const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log(user);
+    try {
+      const res = await userService.login({user});
+      const token = res.data.token;
+      toast.success(res.data.message, { position: "top-right" });
+      setUser({
+        username: "",
+        password: ""
+      });
+     await storeToken(token);
+      navigate("/get-todos");
+      //console.log(res.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message, { position: "top-right" });
+    }
   };
 
   return (
@@ -61,7 +80,7 @@ export const Login = () => {
               </button>
             </div>
             <p className="forgot-password text-right mt-2">
-              Not Registered? <a href="#">Sign Up</a>
+              Not Registered? <Link to={"/register"}>Sign Up</Link>
             </p>
           </div>
         </form>

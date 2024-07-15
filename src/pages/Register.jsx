@@ -1,7 +1,9 @@
-import { React, useState, useNavigate } from "react";
+import { React, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Register.css";
 import userService from "../services/userService";
 import toast from "react-hot-toast";
+import { useAuth } from "../store/tokenStore";
 
 export const Register = () => {
   const [user, setUser] = useState({
@@ -11,7 +13,10 @@ export const Register = () => {
     password: "",
   });
 
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
+
+  const {storeToken} = useAuth();
+
   const handleInput = (e) => {
     //console.log(e);
     let name = e.target.name;
@@ -23,10 +28,11 @@ export const Register = () => {
     });
   };
 
-  const handleSubmit = async() => {
-    
+  const handleSubmit = async(e) => {
+    e.preventDefault();
     try {
       const res = await userService.register({user});
+      const token = res.data.token;
       toast.success(res.data.message, { position: "top-right" });
       setUser({
         username: "",
@@ -34,7 +40,9 @@ export const Register = () => {
         phone: "",
         password: ""
       });
-      console.log(res.data);
+      storeToken(token);
+      navigate("/");
+      //console.log(res.data);
     } catch (error) {
       toast.error(error.response?.data?.message || error.message, { position: "top-right" });
     }
@@ -99,7 +107,7 @@ export const Register = () => {
               </button>
             </div>
             <p className="forgot-password text-right mt-2">
-              Already Registered? <a href="#">Sign In</a>
+              Already Registered? <Link to={"/"}>Sign In</Link>
             </p>
           </div>
         </form>

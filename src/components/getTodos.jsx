@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
 import Todo from "./todo";
-import axios from "axios";
 import toast from "react-hot-toast";
 import todoService from "../services/todoService";
+import Navbar from "./Navbar";
+import { useAuth } from "../store/tokenStore";
 
 const GetTodos = () => {
+  const {checkLogIn} = useAuth();
   const [todos, setTodos] = useState([]);
   const [todo, setTodo] = useState({ task: "" });
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateId, setUpdateId] = useState(null);
+  const [isLoggedIn,setIsLoggedIn]=useState(checkLogIn);
+
+  //console.log("isloggedin---------",checkLogIn,isLoggedIn);
 
   //console.log(todos);
 
@@ -62,7 +67,7 @@ const GetTodos = () => {
         setIsUpdating(false);
         setUpdateId(null);
       } catch (error) {
-        toast.error(error.message, { position: "top-right" });
+        toast.error(error.response?.data?.message || error.message, { position: "top-right" });
       }
     } else {
       try {
@@ -80,6 +85,9 @@ const GetTodos = () => {
 
   return (
     <>
+    {
+      isLoggedIn ? <> 
+      <Navbar />
       <div className="userTable">
         <h3>ToDos List</h3>
         <div className="input-div">
@@ -102,6 +110,9 @@ const GetTodos = () => {
           updateId={updateId}
         />
       </div>
+      </>
+      : <div>You are not logged In</div>
+    } 
     </>
   );
 };

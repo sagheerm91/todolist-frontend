@@ -44,6 +44,9 @@ class todoService {
         //console.log("Response:", res);
         return res.data;
       }
+      else{
+        return res.message;
+      }
     } catch (error) {
       throw error;
     }

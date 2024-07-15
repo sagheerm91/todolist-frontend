@@ -1,17 +1,23 @@
 import axios from "axios";
 
+const getToken = () => {
+    return localStorage.getItem("token");
+}
+
 const instance = axios.create({
     baseUrl : process.env.REACT_APP_BASE_URL,
     timeout: 10000,
-    headers:{
-        author : 'Sagheer'
-      }
       
 });
 
 
+
 instance.interceptors.request.use((config) => {
     console.log("This Request Is From Interceptor");
+    const token = getToken();
+        if (token) {
+            config.headers['Authorization'] = token;
+        }
     return config;
 },
 error => {
