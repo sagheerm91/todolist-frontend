@@ -4,6 +4,8 @@ import GetTodos from "./components/getTodos.jsx";
 import { Register } from "./pages/Register.jsx";
 import { Login } from "./pages/Login.jsx";
 import { Logout } from "./pages/Logout.jsx";
+import {AccountSetting} from "./pages/account-setting.jsx";
+
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           <Route path="/get-todos" element={<GetTodos />} />
+
+          <Route path="/account-setting" element={<AccountSetting />} />
 
           <Route path="/logout" element={<Logout />} />
         </Routes>

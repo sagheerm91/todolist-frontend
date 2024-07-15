@@ -11,6 +11,7 @@ export const Register = () => {
     email: "",
     phone: "",
     password: "",
+    name: "",
   });
 
   const navigate = useNavigate();
@@ -38,7 +39,8 @@ export const Register = () => {
         username: "",
         email: "",
         phone: "",
-        password: ""
+        password: "",
+        name:"",
       });
       storeToken(token);
       navigate("/");
@@ -53,6 +55,18 @@ export const Register = () => {
         <form onSubmit={handleSubmit} className="Auth-form">
           <div className="Auth-form-content">
             <h3 className="Auth-form-title">Sign Up</h3>
+            <div className="form-group mt-3">
+              <label htmlFor="email">Name</label>
+              <input
+                type="name"
+                className="form-control mt-1"
+                name="name"
+                autoComplete="on"
+                onChange={handleInput}
+                value={user.name}
+                placeholder="Enter name"
+              />
+            </div>
             <div className="form-group mt-3">
               <label htmlFor="username">Username</label>
               <input

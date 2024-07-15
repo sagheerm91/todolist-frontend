@@ -1,29 +1,47 @@
 #neubar {
-    background: rgb(205, 230, 224);
-    box-shadow: 4px 6px 12px rgba(0,0,0,0.4)
-  }
-  
-  .nav-item .active {
-    border-radius: 6px;
-    /* background: darkcyan; */
-   /* background: linear-gradient(145deg, #ffe7ca, #f5d7b2); */
-    /* box-shadow:  4px 4px 8px #ddc1a0,
-                 -4px -4px 8px #f7e5cc; */
-  }
-  #neubar .dropdown-menu a:hover {
-    color: #454545
-  }
-  #neubar .nav-item {
-    margin : auto 4px;
-  }
-  #neubar a {
-  
-    padding-left:12px;
-    padding-right:12px;
-  }
-  #neubar .dropdown-menu {
-    background : #545454
-  }
-  a.navbar-brand {
-    color: #454545
-  }
+  background: rgb(205, 230, 224);
+  box-shadow: 4px 6px 12px rgba(0,0,0,0.4);
+}
+
+.nav-item .active {
+  border-radius: 6px;
+}
+
+#neubar .dropdown-menu a:hover {
+  color: #4e7daf;
+}
+
+#neubar .nav-item {
+  margin: auto 2px;
+}
+
+#neubar .navbar-nav .nav-link {
+  padding-right: 12px;
+}
+
+#neubar .dropdown-menu {
+  background: rgb(205, 230, 224);
+  margin-right: 10px; /* Adjust this value to add more margin from the right side */
+}
+
+#neubar .dropdown-menu .dropdown-item {
+  color: #000; /* Default color for dropdown items */
+}
+
+#neubar .dropdown-menu .dropdown-item.active, 
+#neubar .dropdown-menu .dropdown-item:active {
+  color: #000; /* Text color for active item */
+  background-color: transparent; /* Background color for active item */
+}
+
+a.navbar-brand {
+  color: #438dd6;
+}
+
+.dropdown-icon {
+  margin-right: 5px; /* Adjust if needed for spacing between icon and text */
+}
+
+.rounded-avatar {
+  border-radius: 50%; /* Makes the avatar rounded */
+}

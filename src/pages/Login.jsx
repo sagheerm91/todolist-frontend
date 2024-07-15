@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import "./Register.css"
 import { Link } from "react-router-dom";
 import userService from "../services/userService";
@@ -13,7 +13,9 @@ export const Login = () => {
   });
 
 const navigate = useNavigate();
+
 const {storeToken} = useAuth();
+const {storeUser,checkLogIn} = useAuth();
 
   // let handle the input field value
   const handleInput = (e) => {
@@ -26,17 +28,31 @@ const {storeToken} = useAuth();
     });
   };
 
+  console.log("isLoggedin",checkLogIn);
+
+  useEffect(()=>{
+    if(checkLogIn())
+    {
+
+      navigate('/get-todos')
+    }
+  },[checkLogIn])
+
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
       const res = await userService.login({user});
       const token = res.data.token;
+      
+      const userInfo = res.data.userInfo;
+
       toast.success(res.data.message, { position: "top-right" });
       setUser({
         username: "",
         password: ""
       });
      await storeToken(token);
+     await storeUser(userInfo);
       navigate("/get-todos");
       //console.log(res.data);
     } catch (error) {

@@ -1,16 +1,25 @@
 import React from "react";
 import "./Navbar.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../store/tokenStore";
+import { Navigate } from 'react-router-dom';
 
 function Navbar() {
+  const {LogoutUser} = useAuth();
+
+  const handleLogout = async () => {
+    await LogoutUser();
+    Navigate("/");
+  };
+
   return (
-    <nav class="navbar navbar-expand-sm navbar-light" id="neubar">
-      <div class="container">
-        <NavLink class="navbar-brand" to={"/get-todos"}>
-          <img src= {require('../images/todo3.png')} height="60" />
+    <nav className="navbar navbar-expand-sm navbar-light" id="neubar">
+      <div className="container">
+        <NavLink className="navbar-brand" to={"/get-todos"}>
+          <img src={require('../images/todo3.png')} height="60" alt="Todo Logo" />
         </NavLink>
         <button
-          class="navbar-toggler"
+          className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNavDropdown"
@@ -18,54 +27,41 @@ function Navbar() {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div class=" collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav ms-auto ">
-            <li class="nav-item">
-              <NavLink className={"nav-link mx-2 "} aria-current="page" to={"/get-todos"}>
+        <div className="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item">
+              <NavLink className={"nav-link mx-2"} aria-current="page" to={"/get-todos"}>
                 Home
               </NavLink>
             </li>
-            <li class="nav-item">
-              <NavLink className={"nav-link mx-2 "} to={"/logout"}>
-                Logout
-              </NavLink>
-            </li>
             
-            {/* <li class="nav-item dropdown">
-              <a
-                class="nav-link mx-2 dropdown-toggle"
+            <li className="nav-item dropdown">
+              <NavLink
+                className="nav-link mx-2 dropdown-toggle"
                 href="#"
                 id="navbarDropdownMenuLink"
                 role="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                Company
-              </a>
-              <ul
-                class="dropdown-menu"
-                aria-labelledby="navbarDropdownMenuLink"
-              >
+                <img src={require('../images/user-icon.png')} height="45" alt="User Icon" className="dropdown-icon rounded-avatar" /> {/* Add your image here */}
+              </NavLink>
+              <ul className="dropdown-menu dropdown-menu-end" >
                 <li>
-                  <a class="dropdown-item" href="#">
-                    Blog
-                  </a>
+                  <NavLink className="dropdown-item" to={"/account-setting"}>
+                    <i className="fa-solid fa-gear"></i> Account Setting
+                  </NavLink>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="#">
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="#">
-                    Contact us
-                  </a>
+                  <NavLink className="dropdown-item" to={"/logout"}>
+                    <i className="fa-solid fa-power-off"></i> Logout
+                  </NavLink>
                 </li>
               </ul>
-            </li> */}
+            </li> 
           </ul>
         </div>
       </div>

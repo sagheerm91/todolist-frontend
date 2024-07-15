@@ -1,22 +1,34 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
-import Todo from "./todo";
+import Todo from "./Todo";
 import toast from "react-hot-toast";
 import todoService from "../services/todoService";
 import Navbar from "./Navbar";
 import { useAuth } from "../store/tokenStore";
+import { useNavigate } from "react-router-dom";
+
 
 const GetTodos = () => {
-  const {checkLogIn} = useAuth();
+  const { checkAdmin } = useAuth();
+  const { checkLogIn } = useAuth();
   const [todos, setTodos] = useState([]);
   const [todo, setTodo] = useState({ task: "" });
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateId, setUpdateId] = useState(null);
-  const [isLoggedIn,setIsLoggedIn]=useState(checkLogIn);
+  const [isLoggedIn, setIsLoggedIn] = useState(checkLogIn);
+  const [isAdmin, setIsAdmin] = useState(checkAdmin);
+
+  const navigate = useNavigate();
 
   //console.log("isloggedin---------",checkLogIn,isLoggedIn);
 
   //console.log(todos);
+
+  const fetchData = async () => {
+    const res = await todoService.getAllTodos();
+    setTodos(res.data);
+  };
+
 
   useEffect(() => {
     fetchData();
@@ -39,10 +51,6 @@ const GetTodos = () => {
     });
   };
 
-  const fetchData = async () => {
-    const res = await todoService.getAllTodos();
-    setTodos(res.data);
-  };
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -67,7 +75,9 @@ const GetTodos = () => {
         setIsUpdating(false);
         setUpdateId(null);
       } catch (error) {
-        toast.error(error.response?.data?.message || error.message, { position: "top-right" });
+        toast.error(error.response?.data?.message || error.message, {
+          position: "top-right",
+        });
       }
     } else {
       try {
@@ -78,15 +88,19 @@ const GetTodos = () => {
         setTodos([...todos, res.todo]);
         setTodo({ task: "" });
       } catch (error) {
-        toast.error(error.response?.data?.message || error.message, { position: "top-right" });
+        toast.error(error.response?.data?.message || error.message, {
+          position: "top-right",
+        });
       }
     }
   };
 
   return (
-    <>
+  <>
     {
-      isLoggedIn ? <> 
+      isLoggedIn ? (
+        isAdmin ? (
+          <> 
       <Navbar />
       <div className="userTable">
         <h3>ToDos List</h3>
@@ -110,8 +124,25 @@ const GetTodos = () => {
           updateId={updateId}
         />
       </div>
-      </>
-      : <div>You are not logged In</div>
+      </> 
+        ) : (
+          <> 
+      <Navbar />
+      <div className="userTable">
+        <h3>ToDos List</h3>
+      
+        <Todo
+          todos={todos}
+          deleteSingleTodo={deleteTodo}
+          updateSingleTodo={updateTodo}
+          updateId={updateId}
+        />
+      </div>
+      </> 
+        )
+      
+      )
+      : navigate("/")
     } 
     </>
   );

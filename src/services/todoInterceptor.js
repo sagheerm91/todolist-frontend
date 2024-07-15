@@ -7,7 +7,10 @@ const getToken = () => {
 const instance = axios.create({
     baseUrl : process.env.REACT_APP_BASE_URL,
     timeout: 10000,
-      
+    headers: {
+        accept: 'application/json',
+
+    }
 });
 
 
