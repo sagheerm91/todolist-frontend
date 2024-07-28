@@ -12,9 +12,10 @@ const instance = axios.create({
 }); */
 
 class todoService {
-  async getAllTodos() {
+  async getAllTodos(page, limit) {
     try {
-      const response = await instance.get(`${baseUrl}/todos/get-todos`);
+      const response = await instance.get(`${baseUrl}/todos/get-todos`, {
+        params: { page, limit } } );
       return response.data.data;
     } catch (error) {
       if (error.response && error.response.status === 409) {

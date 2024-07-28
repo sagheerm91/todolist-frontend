@@ -7,16 +7,17 @@ import { useAuth } from "../store/tokenStore";
 
 export const Register = () => {
   const [user, setUser] = useState({
+    name: "",
     username: "",
     email: "",
     phone: "",
     password: "",
-    name: "",
+    image: "https://icons.veryicon.com/png/o/miscellaneous/two-color-icon-library/user-286.png",
   });
 
   const navigate = useNavigate();
 
-  const {storeToken} = useAuth();
+  const {storeToken, storeUser} = useAuth();
 
   const handleInput = (e) => {
     //console.log(e);
@@ -34,15 +35,18 @@ export const Register = () => {
     try {
       const res = await userService.register({user});
       const token = res.data.token;
+      const userInfo = res.data.user;
       toast.success(res.data.message, { position: "top-right" });
       setUser({
+        name:"",
         username: "",
         email: "",
         phone: "",
         password: "",
-        name:"",
+        image: "",
       });
-      storeToken(token);
+      await storeToken(token);
+      await storeUser(userInfo);
       navigate("/");
       //console.log(res.data);
     } catch (error) {

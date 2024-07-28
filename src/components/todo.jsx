@@ -9,18 +9,29 @@ const Todo = ({ todos, deleteSingleTodo, updateSingleTodo, updateId }) => {
   const { checkAdmin } = useAuth();
   const [isAdmin, setIsAdmin] = useState(checkAdmin);
 
+  // console.log("====================================");
+  // console.log("CHECK IS ADMIN --- ", isAdmin);
+  // console.log("====================================");
+
   const deleteTodo = async (id) => {
     try {
-      const response = await todoService.deleteTodo({ id });
+      const response = await todoService.deleteCourse({ id });
       if (response) {
-        toast.success(response.data.message || "Todo deleted successfully", { position: "top-right" });
+        toast.success(response.data.message || "Course deleted successfully", {
+          position: "top-right",
+        });
         deleteSingleTodo(id);
       }
     } catch (error) {
       console.log("Error while deleting the record", error);
-      toast.error(error.response?.data?.message || error.message || "Failed to delete todo", {
-        position: "top-right",
-      });
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to delete course",
+        {
+          position: "top-right",
+        }
+      );
     }
   };
 
@@ -101,4 +112,3 @@ const Todo = ({ todos, deleteSingleTodo, updateSingleTodo, updateId }) => {
 };
 
 export default Todo;
-

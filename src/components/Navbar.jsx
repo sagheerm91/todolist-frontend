@@ -2,21 +2,29 @@ import React from "react";
 import "./Navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/tokenStore";
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 
 function Navbar() {
-  const {LogoutUser} = useAuth();
+  const { LogoutUser } = useAuth();
+  //const baseUrl = process.env.REACT_APP_IMAGE_URL;
 
   const handleLogout = async () => {
     await LogoutUser();
     Navigate("/");
   };
 
+  const userData = localStorage.getItem("user");
+  const modifiedUser = JSON.parse(userData);
+
   return (
     <nav className="navbar navbar-expand-sm navbar-light" id="neubar">
       <div className="container">
         <NavLink className="navbar-brand" to={"/get-todos"}>
-          <img src={require('../images/todo3.png')} height="60" alt="Todo Logo" />
+          <img
+            src={require("../images/todo3.png")}
+            height="60"
+            alt="Todo Logo"
+          />
         </NavLink>
         <button
           className="navbar-toggler"
@@ -33,11 +41,24 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <NavLink className={"nav-link mx-2"} aria-current="page" to={"/get-todos"}>
+              <NavLink
+                className={"nav-link mx-2"}
+                aria-current="page"
+                to={"/get-todos"}
+              >
                 Home
               </NavLink>
             </li>
-            
+            <li className="nav-item">
+              <NavLink
+                className={"nav-link mx-2"}
+                aria-current="page"
+                to={"/get-courses"}
+              >
+                Courses
+              </NavLink>
+            </li>
+
             <li className="nav-item dropdown">
               <NavLink
                 className="nav-link mx-2 dropdown-toggle"
@@ -47,9 +68,15 @@ function Navbar() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <img src={require('../images/user-icon.png')} height="45" alt="User Icon" className="dropdown-icon rounded-avatar" /> {/* Add your image here */}
+                <img
+                  src={modifiedUser.image}
+                  height="45"
+                  alt="User Icon"
+                  className="dropdown-icon rounded-avatar"
+                />{" "}
+                {/* Add your image here */}
               </NavLink>
-              <ul className="dropdown-menu dropdown-menu-end" >
+              <ul className="dropdown-menu dropdown-menu-end">
                 <li>
                   <NavLink className="dropdown-item" to={"/account-setting"}>
                     <i className="fa-solid fa-gear"></i> Account Setting
@@ -61,7 +88,7 @@ function Navbar() {
                   </NavLink>
                 </li>
               </ul>
-            </li> 
+            </li>
           </ul>
         </div>
       </div>

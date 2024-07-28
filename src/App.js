@@ -5,7 +5,9 @@ import { Register } from "./pages/Register.jsx";
 import { Login } from "./pages/Login.jsx";
 import { Logout } from "./pages/Logout.jsx";
 import {AccountSetting} from "./pages/account-setting.jsx";
-
+import Courses from "./components/courses.jsx";
+import {AddCourse} from "./components/addCourse.jsx";
+import { Details } from "./pages/details.jsx";
 
 function App() {
   return (
@@ -17,7 +19,14 @@ function App() {
 
           <Route path="/get-todos" element={<GetTodos />} />
 
+          <Route path="/get-courses" element={<Courses/>} />
+
           <Route path="/account-setting" element={<AccountSetting />} />
+
+          <Route path="/add-course" element={<AddCourse />} />
+          <Route path="/update-course/:id" element={<AddCourse />} />
+
+          <Route path="/details" element={<Details/>} />
 
           <Route path="/logout" element={<Logout />} />
         </Routes>

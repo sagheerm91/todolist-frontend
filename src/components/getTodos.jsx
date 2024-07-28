@@ -6,7 +6,8 @@ import todoService from "../services/todoService";
 import Navbar from "./Navbar";
 import { useAuth } from "../store/tokenStore";
 import { useNavigate } from "react-router-dom";
-
+import pagination from "./pagination";
+import Pagination from "./pagination";
 
 const GetTodos = () => {
   const { checkAdmin } = useAuth();
@@ -18,6 +19,10 @@ const GetTodos = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(checkLogIn);
   const [isAdmin, setIsAdmin] = useState(checkAdmin);
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(3);
+  const [totalPages, setTotalPages] = useState(1);
+
   const navigate = useNavigate();
 
   //console.log("isloggedin---------",checkLogIn,isLoggedIn);
@@ -25,14 +30,18 @@ const GetTodos = () => {
   //console.log(todos);
 
   const fetchData = async () => {
-    const res = await todoService.getAllTodos();
-    setTodos(res.data);
+    const result = await todoService.getAllTodos(page, limit);
+    if (result.error) {
+      console.error(result.error);
+    } else {
+      setTodos(result.data);
+      setTotalPages(result.totalPages);
+    }
   };
-
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page, limit]);
 
   const updateTodo = (id, index) => {
     setIsUpdating(true);
@@ -50,7 +59,6 @@ const GetTodos = () => {
       return oldTodos.filter((todo) => todo._id !== id);
     });
   };
-
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -96,54 +104,71 @@ const GetTodos = () => {
   };
 
   return (
-  <>
-    {
-      isLoggedIn ? (
+    <>
+      {isLoggedIn ? (
         isAdmin ? (
-          <> 
-      <Navbar />
-      <div className="userTable">
-        <h3>ToDos List</h3>
-        <div className="input-div">
-          <input
-            onChange={inputHandler}
-            type="text"
-            name="task"
-            value={todo.task}
-            placeholder="Add New To-Do"
-          />
-          <button onClick={submitData} type="button" class="btn btn-primary">
-            {isUpdating ? "Update" : "Add"}
-          </button>
-        </div>
+          <>
+            <Navbar />
+            <div className="userTable">
+              <h3>ToDos List</h3>
+              <div className="input-div">
+                <input
+                  onChange={inputHandler}
+                  type="text"
+                  name="task"
+                  value={todo.task}
+                  placeholder="Add New To-Do"
+                />
+                <button
+                  onClick={submitData}
+                  type="button"
+                  class="btn btn-primary"
+                >
+                  {isUpdating ? "Update" : "Add"}
+                </button>
+              </div>
 
-        <Todo
-          todos={todos}
-          deleteSingleTodo={deleteTodo}
-          updateSingleTodo={updateTodo}
-          updateId={updateId}
-        />
-      </div>
-      </> 
+              <Todo
+                todos={todos}
+                deleteSingleTodo={deleteTodo}
+                updateSingleTodo={updateTodo}
+                updateId={updateId}
+              />
+              <div>
+                <Pagination
+                  page={page}
+                  limit={limit}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                  onLimitChange={setLimit}
+                />
+              </div>
+            </div>
+          </>
         ) : (
-          <> 
-      <Navbar />
-      <div className="userTable">
-        <h3>ToDos List</h3>
-      
-        <Todo
-          todos={todos}
-          deleteSingleTodo={deleteTodo}
-          updateSingleTodo={updateTodo}
-          updateId={updateId}
-        />
-      </div>
-      </> 
+          <>
+            <Navbar />
+            <div className="userTable">
+              <h3>ToDos List</h3>
+              <Todo
+                todos={todos}
+                deleteSingleTodo={deleteTodo}
+                updateSingleTodo={updateTodo}
+                updateId={updateId}
+              />
+              <Pagination
+                page={page}
+                limit={limit}
+                totalPages={totalPages}
+                onPageChange={setPage}
+                onLimitChange={setLimit}
+              />
+            </div>
+          </>
         )
-      
-      )
-      : navigate("/")
-    } 
+      ) : (
+        navigate("/")
+      )}
     </>
   );
 };
