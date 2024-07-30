@@ -3,6 +3,9 @@
   background-color: white;
 }
 
+.error{
+  color: red;
+}
 .Auth-form-container {
   display: flex;
   justify-content: center;

@@ -8,11 +8,6 @@ function Navbar() {
   const { LogoutUser } = useAuth();
   //const baseUrl = process.env.REACT_APP_IMAGE_URL;
 
-  const handleLogout = async () => {
-    await LogoutUser();
-    Navigate("/");
-  };
-
   const userData = localStorage.getItem("user");
   const modifiedUser = JSON.parse(userData);
 
@@ -56,6 +51,16 @@ function Navbar() {
                 to={"/get-courses"}
               >
                 Courses
+              </NavLink>
+            </li>
+
+            <li className="nav-item">
+              <NavLink
+                className={"nav-link mx-2"}
+                aria-current="page"
+                to={"/cart"}
+              >
+                <i class="fa-solid fa-cart-shopping"></i>
               </NavLink>
             </li>
 

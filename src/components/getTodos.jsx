@@ -6,8 +6,8 @@ import todoService from "../services/todoService";
 import Navbar from "./Navbar";
 import { useAuth } from "../store/tokenStore";
 import { useNavigate } from "react-router-dom";
-import pagination from "./pagination";
 import Pagination from "./pagination";
+import todoSchema from "../validations/todo-validations";
 
 const GetTodos = () => {
   const { checkAdmin } = useAuth();
@@ -22,6 +22,8 @@ const GetTodos = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(3);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [errors, setErrors] = useState([]);
 
   const navigate = useNavigate();
 
@@ -63,13 +65,19 @@ const GetTodos = () => {
   const inputHandler = (e) => {
     const { name, value } = e.target;
     setTodo({ ...todo, [name]: value });
+    setErrors({
+      ...errors,
+      [name]: "", // Clear the error when the user starts typing
+    });
   };
 
   const submitData = async (e) => {
     e.preventDefault();
 
-    if (isUpdating) {
-      try {
+    try {
+      await todoSchema.validate(todo, { abortEarly: false });
+
+      if (isUpdating) {
         const response = await todoService.updateTodo({ updateId, todo });
         //console.log("Update Response:", response);
 
@@ -82,24 +90,25 @@ const GetTodos = () => {
         setTodo({ task: "" });
         setIsUpdating(false);
         setUpdateId(null);
-      } catch (error) {
-        toast.error(error.response?.data?.message || error.message, {
-          position: "top-right",
-        });
-      }
-    } else {
-      try {
+      } else {
         const res = await todoService.createTodo({ todo });
         // console.log("Create Response:", res.todo);
         toast.success(res.message, { position: "top-right" });
 
         setTodos([...todos, res.todo]);
         setTodo({ task: "" });
-      } catch (error) {
-        toast.error(error.response?.data?.message || error.message, {
-          position: "top-right",
-        });
       }
+    } catch (error) {
+      const newErrors = {};
+
+      error.inner.forEach((err) => {
+        newErrors[err.path] = err.message;
+      });
+
+      setErrors(newErrors);
+      toast.error(error.response?.data?.message || error.message, {
+        position: "top-right",
+      });
     }
   };
 
@@ -126,6 +135,7 @@ const GetTodos = () => {
                 >
                   {isUpdating ? "Update" : "Add"}
                 </button>
+                {errors.task && <div className="error">{errors.task}</div>}
               </div>
 
               <Todo

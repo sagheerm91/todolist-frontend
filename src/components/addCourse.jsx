@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import courseService from "../services/courseService";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
+import courseSchema from "../validations/course-validation";
 
 export const AddCourse = () => {
   const [course, setCourse] = useState({
@@ -18,6 +19,8 @@ export const AddCourse = () => {
 
   const { id } = useParams();
 
+  const [errors, setErrors] = useState([]);
+
   const navigate = useNavigate();
 
   const handleInput = (e) => {
@@ -29,7 +32,12 @@ export const AddCourse = () => {
       ...course,
       [name]: value,
     });
+    setErrors({
+      ...errors,
+      [name]: "", // Clear the error when the user starts typing
+    });
   };
+
   const fetchData = async (id) => {
     const res = await courseService.getSingleCourse(id);
     setCourse(res.data.data);
@@ -47,17 +55,27 @@ export const AddCourse = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
+      setCourse({
+        ...course,
+        image: file, // Set the file directly
+      });
+      setErrors({
+        ...errors,
+        image: "", // Clear the error when the user starts typing
+      });
     }
   };
 
   const handleSubmit = async (e) => {
-    if (imageFile) {
-      course.image = imageFile;
-    }
-
     e.preventDefault();
+
     try {
+      await courseSchema.validate(course, { abortEarly: false });
+
+      // if (imageFile) {
+      //   course.image = imageFile;
+      // }
+
       let res;
       if (id) {
         res = await courseService.updateCourse({ id, course });
@@ -72,6 +90,13 @@ export const AddCourse = () => {
       navigate("/get-courses");
       //console.log(res.data);
     } catch (error) {
+      const newErrors = {};
+
+      error.inner.forEach((err) => {
+        newErrors[err.path] = err.message;
+      });
+
+      setErrors(newErrors);
       toast.error(error.response?.data?.message || error.message, {
         position: "top-right",
       });
@@ -94,6 +119,7 @@ export const AddCourse = () => {
               onChange={handleInput}
               required
             />
+            {errors.title && <div className="error">{errors.title}</div>}
           </div>
           <div className="col-md-5 border-right">
             <label htmlFor="description">Description</label>
@@ -105,6 +131,9 @@ export const AddCourse = () => {
               onChange={handleInput}
               required
             />
+            {errors.description && (
+              <div className="error">{errors.description}</div>
+            )}
           </div>
           <div className="col-md-5 border-right">
             <label htmlFor="originalPrice">Original Price</label>
@@ -116,6 +145,9 @@ export const AddCourse = () => {
               onChange={handleInput}
               required
             />
+            {errors.originalPrice && (
+              <div className="error">{errors.originalPrice}</div>
+            )}
           </div>
           <div className="col-md-5 border-right">
             <label htmlFor="discountedPrice">Discounted Price</label>
@@ -127,6 +159,9 @@ export const AddCourse = () => {
               onChange={handleInput}
               required
             />
+            {errors.discountedPrice && (
+              <div className="error">{errors.discountedPrice}</div>
+            )}
           </div>
           <div className="col-md-5 border-right">
             <label htmlFor="image">Image URL</label>
@@ -137,6 +172,7 @@ export const AddCourse = () => {
               onChange={handleImageChange}
               required
             />
+            {errors.image && <div className="error">{errors.image}</div>}
           </div>
           <button
             type="button"

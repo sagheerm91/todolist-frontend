@@ -24,6 +24,7 @@ class CourseService{
           
         }
       }
+
       async getCoursesByUser({userId, page, limit, search}) {
         try {
           const response = await instance.get(`${baseUrl}/courses/get-courses-by-user/${userId}`,{
@@ -54,7 +55,7 @@ class CourseService{
         `${baseUrl}/courses/get-single-course/${id}`
       );
 
-      return response.data;
+      return response.data.data;
   }
 
     async updateCourse({ id, course }) {
@@ -111,6 +112,34 @@ class CourseService{
       }
     };
 
+    async makePaymentRequest({totalPrice, name, user, ids}){
+      try {
+        // console.log('====================================');
+        // console.log("Price & Name ", {totalPrice, name});
+        // console.log('====================================');
+        const res = await instance.post(`${baseUrl}/courses/create-checkout-session`,  {
+          totalPrice: totalPrice,
+          name: name,
+          user: user,
+          ids: ids,
+        });
+        return res.data;
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    async savePaymentDetails({sessionId, courseIds}){
+      try {
+        const res = await instance.post(`${baseUrl}/courses/save-payment-details`, {
+          sessionId: sessionId,
+          courseIds: courseIds,
+        });
+        return res;
+      } catch (error) {
+        throw error;
+      }
+    }
 
 };
 export default new CourseService();

@@ -4,6 +4,7 @@ import "./Register.css";
 import userService from "../services/userService";
 import toast from "react-hot-toast";
 import { useAuth } from "../store/tokenStore";
+import signupSchema from "../validations/signup-validations";
 
 export const Register = () => {
   const [user, setUser] = useState({
@@ -12,12 +13,14 @@ export const Register = () => {
     email: "",
     phone: "",
     password: "",
-    image: "https://icons.veryicon.com/png/o/miscellaneous/two-color-icon-library/user-286.png",
+    image:
+      "https://icons.veryicon.com/png/o/miscellaneous/two-color-icon-library/user-286.png",
   });
 
+  const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
 
-  const {storeToken, storeUser} = useAuth();
+  const { storeToken, storeUser } = useAuth();
 
   const handleInput = (e) => {
     //console.log(e);
@@ -30,15 +33,17 @@ export const Register = () => {
     });
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await userService.register({user});
+      await signupSchema.validate(user, { abortEarly: false });
+
+      const res = await userService.register({ user });
       const token = res.data.token;
       const userInfo = res.data.user;
       toast.success(res.data.message, { position: "top-right" });
       setUser({
-        name:"",
+        name: "",
         username: "",
         email: "",
         phone: "",
@@ -50,7 +55,17 @@ export const Register = () => {
       navigate("/");
       //console.log(res.data);
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message, { position: "top-right" });
+      const newErrors = {};
+
+      error.inner.forEach((err) => {
+        newErrors[err.path] = err.message;
+      });
+
+      setErrors(newErrors);
+
+      toast.error(error.response?.data?.message || error.message, {
+        position: "top-right",
+      });
     }
   };
   return (
@@ -70,6 +85,7 @@ export const Register = () => {
                 value={user.name}
                 placeholder="Enter name"
               />
+              {errors.name && <div className="error">{errors.name}</div>}
             </div>
             <div className="form-group mt-3">
               <label htmlFor="username">Username</label>
@@ -82,6 +98,9 @@ export const Register = () => {
                 value={user.username}
                 placeholder="Enter username"
               />
+              {errors.username && (
+                <div className="error">{errors.username}</div>
+              )}
             </div>
             <div className="form-group mt-3">
               <label htmlFor="email">Email</label>
@@ -94,6 +113,7 @@ export const Register = () => {
                 value={user.email}
                 placeholder="Enter email"
               />
+              {errors.email && <div className="error">{errors.email}</div>}
             </div>
             <div className="form-group mt-3">
               <label htmlFor="phone">Phone</label>
@@ -106,6 +126,7 @@ export const Register = () => {
                 value={user.phone}
                 placeholder="Enter phone"
               />
+              {errors.phone && <div className="error">{errors.phone}</div>}
             </div>
             <div className="form-group mt-3">
               <label htmlFor="password">Password</label>
@@ -118,6 +139,9 @@ export const Register = () => {
                 value={user.password}
                 placeholder="Enter password"
               />
+              {errors.password && (
+                <div className="error">{errors.password}</div>
+              )}
             </div>
             <div className="d-grid gap-2 mt-3">
               <button type="submit" className="btn btn-primary">

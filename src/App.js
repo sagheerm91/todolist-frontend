@@ -8,6 +8,8 @@ import {AccountSetting} from "./pages/account-setting.jsx";
 import Courses from "./components/courses.jsx";
 import {AddCourse} from "./components/addCourse.jsx";
 import { Details } from "./pages/details.jsx";
+import Cart from "./components/cart.jsx";
+import Success from "./pages/success.jsx";
 
 function App() {
   return (
@@ -27,6 +29,9 @@ function App() {
           <Route path="/update-course/:id" element={<AddCourse />} />
 
           <Route path="/details" element={<Details/>} />
+
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/success" element={<Success/>} />
 
           <Route path="/logout" element={<Logout />} />
         </Routes>

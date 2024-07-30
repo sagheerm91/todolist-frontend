@@ -21,6 +21,7 @@ const Courses = () => {
   const [limit, setLimit] = useState(3);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const user = localStorage.getItem("user");
   const parsedUser = JSON.parse(user);
@@ -75,8 +76,18 @@ const Courses = () => {
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 2000); // 3 seconds debounce
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [search]);
+
+  useEffect(() => {
     fetchData();
-  }, [page, limit, search]);
+  }, [page, limit, debouncedSearch]);
 
   return (
     <>
@@ -122,7 +133,6 @@ const Courses = () => {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-
               <div>
                 <div className="row">
                   {courses?.map((course, index) => (
