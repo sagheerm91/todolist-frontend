@@ -7,9 +7,6 @@ import { useAuth } from "../store/tokenStore";
 import courseService from "../services/courseService";
 
 const stripekey = process.env.REACT_APP_STRIPE_KEY;
-console.log("====================================");
-console.log("Stripe --- ", stripekey);
-console.log("====================================");
 
 const stripePromise = loadStripe(`${stripekey}`);
 

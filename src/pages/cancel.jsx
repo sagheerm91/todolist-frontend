@@ -3,18 +3,16 @@ import { NavLink, useLocation } from "react-router-dom";
 import courseService from "../services/courseService";
 import "../App.css";
 
-const Success = () => {
+const Cancel = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
-  const sessionId = query.get("session_id");
   const orderId = query.get("order_id");
 
   useEffect(() => {
     const savePaymentDetails = async () => {
-      if (sessionId && orderId) {
+      if (orderId) {
         try {
-          const response = await courseService.savePaymentDetails({
-            sessionId,
+          const response = await courseService.cancelPayment({
             orderId,
           });
           console.log("Payment details saved:", response);
@@ -25,7 +23,7 @@ const Success = () => {
     };
 
     savePaymentDetails();
-  }, [sessionId, orderId]);
+  }, [orderId]);
 
   return (
     <div className="vh-100 d-flex justify-content-center align-items-center">
@@ -46,8 +44,8 @@ const Success = () => {
             </svg>
           </div>
           <div className="align-items-center text-center">
-            <h1 className="text-success">Thank You!</h1>
-            <p>You have successfully purchased</p>
+            <h1 className="text-success">Payment Cancelled!</h1>
+            <p>You have cancelled the payment</p>
             <NavLink
               type="button"
               className="btn btn-primary"
@@ -62,4 +60,4 @@ const Success = () => {
   );
 };
 
-export default Success;
+export default Cancel;

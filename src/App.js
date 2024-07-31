@@ -10,6 +10,7 @@ import {AddCourse} from "./components/addCourse.jsx";
 import { Details } from "./pages/details.jsx";
 import Cart from "./components/cart.jsx";
 import Success from "./pages/success.jsx";
+import Declined from "./pages/declined.jsx";
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
 
           <Route path="/cart" element={<Cart />} />
           <Route path="/success" element={<Success/>} />
+          <Route path="/declined" element={<Declined />} />
+
 
           <Route path="/logout" element={<Logout />} />
         </Routes>

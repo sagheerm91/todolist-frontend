@@ -4,6 +4,7 @@ import "./courses.css";
 import courseService from "../services/courseService";
 import { useAuth } from "../store/tokenStore";
 import UpdateCourse from "./getCourse";
+import { loadStripe } from "@stripe/stripe-js";
 import Pagination from "./pagination";
 import { useNavigate } from "react-router";
 
@@ -26,9 +27,10 @@ const Courses = () => {
   const user = localStorage.getItem("user");
   const parsedUser = JSON.parse(user);
   const userId = parsedUser._id;
-  // console.log("====================================");
-  // console.log("USER ID --- ", userId);
-  // console.log("====================================");
+
+  const stripekey = process.env.REACT_APP_STRIPE_KEY;
+
+  const stripePromise = loadStripe(`${stripekey}`);
 
   const navigate = useNavigate();
 
@@ -52,13 +54,26 @@ const Courses = () => {
       setPurchased(ordersRes.data.orders.map((order) => order.courseId));
     }
   };
+
   // console.log("====================================");
   // console.log("Purchased --- ", purchased);
   // console.log("====================================");
-  const handlePurchase = async (courseId) => {
+
+  const handlePurchase = async (course) => {
     try {
-      const res = await courseService.purchaseCourse({ userId, courseId });
-      setPurchased([...purchased, courseId]);
+      const res = await courseService.purchaseCourse({ course });
+      const session = await res;
+      const stripe = await stripePromise;
+
+      // Redirect to Stripe Checkout
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+
+      if (error) {
+        console.error("Stripe Checkout error:", error);
+      }
+      setPurchased([...purchased, course._id]);
       fetchData(); // Refresh course data to reflect the purchase status
     } catch (error) {
       console.error("Error purchasing course:", error);
@@ -164,7 +179,7 @@ const Courses = () => {
 
                             <button
                               className="btn btn-primary w-100"
-                              onClick={() => handlePurchase(course._id)}
+                              onClick={() => handlePurchase(course)}
                               disabled={purchased.includes(course._id)}
                             >
                               {purchased.includes(course._id)

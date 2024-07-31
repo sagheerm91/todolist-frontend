@@ -19,6 +19,9 @@ class CourseService{
       async getUserOrders({userId}){
         try {
           const response = await instance.get(`${baseUrl}/courses/get-orders-by-user/${userId}`);
+          // console.log('====================================');
+          // console.log("Orders --- ", response.data);
+          // console.log('====================================');
           return response.data;
         } catch (error) {
           
@@ -85,7 +88,7 @@ class CourseService{
       }
     }
 
-    async purchaseCourse({userId, courseId}){
+    async purchaseCourse({course}){
       try {
 
         // console.log('====================================');
@@ -93,10 +96,8 @@ class CourseService{
         // console.log("COURSE ID --- ", courseId)
         // console.log('====================================');
 
-        const res = await instance.post(`${baseUrl}/courses/purchase`, null, {
-          params:{userId, courseId}
-        });
-        return res;
+        const res = await instance.post(`${baseUrl}/courses/create-checkout-session`, course);
+        return res.data;
       } catch (error) {
         throw error;
       }
@@ -129,17 +130,27 @@ class CourseService{
       }
     }
 
-    async savePaymentDetails({sessionId, courseIds}){
+    async savePaymentDetails({sessionId, orderId}){
       try {
         const res = await instance.post(`${baseUrl}/courses/save-payment-details`, {
           sessionId: sessionId,
-          courseIds: courseIds,
+          orderId: orderId,
         });
         return res;
       } catch (error) {
         throw error;
       }
     }
-
+    
+    async cancelPayment({orderId}){
+      try {
+        const res = await instance.post(`${baseUrl}/courses/canel-payment`, {
+          orderId: orderId,
+        });
+        return res;
+      } catch (error) {
+        throw error;
+      }
+    }
 };
 export default new CourseService();
