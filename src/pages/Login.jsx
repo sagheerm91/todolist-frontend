@@ -5,6 +5,14 @@ import userService from "../services/userService";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/tokenStore";
+import { GoogleLogin } from "@react-oauth/google";
+
+const responseMessage = (response) => {
+  console.log(response);
+};
+const errorMessage = (error) => {
+  console.log(error);
+};
 
 export const Login = () => {
   const [user, setUser] = useState({
@@ -99,6 +107,11 @@ export const Login = () => {
             <p className="forgot-password text-right mt-2">
               Not Registered? <Link to={"/register"}>Sign Up</Link>
             </p>
+            <div>
+              <hr />
+              <hr />
+              <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
+            </div>
           </div>
         </form>
       </div>

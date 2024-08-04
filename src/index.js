@@ -6,15 +6,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import reportWebVitals from "./reportWebVitals";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./store/tokenStore";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   //<React.StrictMode>
   <>
-    <AuthProvider>
+  <GoogleOAuthProvider 
+  clientId="776341234140-ljg0vleooprk49k0ieakata1ej40tepr.apps.googleusercontent.com">
+  <AuthProvider>
       <App />
       <Toaster />
     </AuthProvider>
+  </GoogleOAuthProvider>
+    
   </>
 
   //</React.StrictMode>

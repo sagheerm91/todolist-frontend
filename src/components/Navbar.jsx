@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Navbar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../store/tokenStore";
@@ -8,6 +8,11 @@ function Navbar() {
   const { LogoutUser } = useAuth();
   //const baseUrl = process.env.REACT_APP_IMAGE_URL;
 
+  const { checkLogIn } = useAuth();
+  const { checkAdmin } = useAuth();
+
+  const [isLoggedIn, setIsLoggedIn] = useState(checkLogIn);
+  const [isAdmin, setIsAdmin] = useState(checkAdmin);
   const userData = localStorage.getItem("user");
   const modifiedUser = JSON.parse(userData);
 
@@ -44,6 +49,7 @@ function Navbar() {
                 Home
               </NavLink>
             </li>
+
             <li className="nav-item">
               <NavLink
                 className={"nav-link mx-2"}
@@ -53,6 +59,20 @@ function Navbar() {
                 Courses
               </NavLink>
             </li>
+
+            {isAdmin ? (
+              <li className="nav-item">
+                <NavLink
+                  className={"nav-link mx-2"}
+                  aria-current="page"
+                  to={"/get-all-orders"}
+                >
+                  Orders
+                </NavLink>
+              </li>
+            ) : (
+              <></>
+            )}
 
             <li className="nav-item">
               <NavLink
