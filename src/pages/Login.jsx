@@ -6,19 +6,16 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/tokenStore";
 import { GoogleLogin } from "@react-oauth/google";
-
-const responseMessage = (response) => {
-  console.log(response);
-};
-const errorMessage = (error) => {
-  console.log(error);
-};
+import { LoginSocialFacebook } from "reactjs-social-login";
+import { FacebookLoginButton } from "react-social-login-buttons";
 
 export const Login = () => {
   const [user, setUser] = useState({
     username: "",
     password: "",
   });
+
+  const appId = process.env.REACT_APP_FB_APP_ID;
 
   const navigate = useNavigate();
 
@@ -50,7 +47,7 @@ export const Login = () => {
       const res = await userService.login({ user });
       const token = res.data.token;
 
-      const userInfo = res.data.userInfo;
+      const userInfo = res.data.user;
 
       toast.success(res.data.message, { position: "top-right" });
       setUser({
@@ -66,6 +63,62 @@ export const Login = () => {
         position: "top-right",
       });
     }
+  };
+
+  const responseMessage = async (response) => {
+    const googleToken = response.credential;
+
+    try {
+      const res = await userService.googleLogin({ googleToken });
+
+      const token = res.data.token;
+
+      const userInfo = res.data.user;
+
+      console.log(res);
+      toast.success(res.data.message, { position: "top-right" });
+
+      await storeToken(token);
+      await storeUser(userInfo);
+
+      navigate("/get-todos");
+      //console.log(res.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message, {
+        position: "top-right",
+      });
+    }
+  };
+  const errorMessage = (error) => {
+    console.log(error);
+  };
+
+  const FBLoginSuccess = async (response) => {
+    const fbData = response.data;
+    try {
+      const res = await userService.facebookLogin({ fbData });
+
+      const token = res.data.token;
+
+      const userInfo = res.data.user;
+
+      console.log(res);
+      toast.success(res.data.message, { position: "top-right" });
+
+      await storeToken(token);
+      await storeUser(userInfo);
+
+      navigate("/get-todos");
+      //console.log(res.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message, {
+        position: "top-right",
+      });
+    }
+  };
+
+  const FBLoginError = async (error) => {
+    console.log("Error --- ", error);
   };
 
   return (
@@ -109,8 +162,16 @@ export const Login = () => {
             </p>
             <div>
               <hr />
-              <hr />
               <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
+            </div>
+            <div className="mt-4">
+              <LoginSocialFacebook
+                appId={appId}
+                onResolve={FBLoginSuccess}
+                onReject={FBLoginError}
+              >
+                <FacebookLoginButton />
+              </LoginSocialFacebook>
             </div>
           </div>
         </form>

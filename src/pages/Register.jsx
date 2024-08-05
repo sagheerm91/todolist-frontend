@@ -5,6 +5,9 @@ import userService from "../services/userService";
 import toast from "react-hot-toast";
 import { useAuth } from "../store/tokenStore";
 import signupSchema from "../validations/signup-validations";
+import { GoogleLogin } from "@react-oauth/google";
+import { LoginSocialFacebook } from "reactjs-social-login";
+import { FacebookLoginButton } from "react-social-login-buttons";
 
 export const Register = () => {
   const [user, setUser] = useState({
@@ -19,6 +22,8 @@ export const Register = () => {
 
   const [errors, setErrors] = useState([]);
   const navigate = useNavigate();
+
+  const appId = process.env.REACT_APP_FB_APP_ID;
 
   const { storeToken, storeUser } = useAuth();
 
@@ -68,10 +73,66 @@ export const Register = () => {
       });
     }
   };
+
+  const responseMessage = async (response) => {
+    const googleToken = response.credential;
+
+    try {
+      const res = await userService.googleLogin({ googleToken });
+
+      const token = res.data.token;
+
+      const userInfo = res.data.user;
+
+      console.log(res);
+      toast.success(res.data.message, { position: "top-right" });
+
+      await storeToken(token);
+      await storeUser(userInfo);
+
+      navigate("/get-todos");
+      //console.log(res.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message, {
+        position: "top-right",
+      });
+    }
+  };
+  const errorMessage = (error) => {
+    console.log(error);
+  };
+
+  const FBLoginSuccess = async (response) => {
+    const fbData = response.data;
+    try {
+      const res = await userService.facebookLogin({ fbData });
+
+      const token = res.data.token;
+
+      const userInfo = res.data.user;
+
+      console.log(res);
+      toast.success(res.data.message, { position: "top-right" });
+
+      await storeToken(token);
+      await storeUser(userInfo);
+
+      navigate("/get-todos");
+      //console.log(res.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message, {
+        position: "top-right",
+      });
+    }
+  };
+
+  const FBLoginError = async (error) => {
+    console.log("Error --- ", error);
+  };
   return (
     <>
       <div className="Auth-form-container">
-        <form onSubmit={handleSubmit} className="Auth-form">
+        <div className="Auth-form">
           <div className="Auth-form-content">
             <h3 className="Auth-form-title">Sign Up</h3>
             <div className="form-group mt-3">
@@ -144,15 +205,32 @@ export const Register = () => {
               )}
             </div>
             <div className="d-grid gap-2 mt-3">
-              <button type="submit" className="btn btn-primary">
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="btn btn-primary"
+              >
                 Submit
               </button>
             </div>
-            <p className="forgot-password text-right mt-2">
+            <p className="forgot-password text-center mt-4">
               Already Registered? <Link to={"/"}>Sign In</Link>
             </p>
+            <hr />
+            <div>
+              <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
+            </div>
+            <div className="mt-4">
+              <LoginSocialFacebook
+                appId={appId}
+                onResolve={FBLoginSuccess}
+                onReject={FBLoginError}
+              >
+                <FacebookLoginButton />
+              </LoginSocialFacebook>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
     </>
   );

@@ -17,10 +17,22 @@ class userService{
         return response;
     }
 
+    async googleLogin({googleToken}){
+       // console.log("G Token --- ", googleToken);
+        const response = await instance.post(`${baseUrl}/users/google-login`, {googleToken});
+        return response;
+    }
+
+    async facebookLogin({fbData}){
+        console.log("FB Data --- ", fbData);
+        const response = await instance.post(`${baseUrl}/users/facebook-login`, {fbData});
+        return response;
+    }
+
     async update({userId, user}){
-        console.log('====================================');
-        console.log("FORM DATA ---- ", user);
-        console.log('====================================');
+        // console.log('====================================');
+        // console.log("FORM DATA ---- ", user);
+        // console.log('====================================');
         const response = await instance.put(`${baseUrl}/users/update-user/${userId}`, user, {
             headers : {
                 "Content-Type": "multipart/form-data"

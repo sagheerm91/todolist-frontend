@@ -18,9 +18,9 @@ export const Details = () => {
       const purchasedCourses = ordersRes.data.orders.map(
         (order) => order.courseId
       );
-      console.log("====================================");
-      console.log("Purchased? ", purchasedCourses);
-      console.log("====================================");
+      // console.log("====================================");
+      // console.log("Purchased? ", purchasedCourses);
+      // console.log("====================================");
       if (purchasedCourses.includes(course._id)) {
         console.log("isPurchased? ", purchasedCourses.includes(course._id));
         setPurchased(true);
@@ -45,6 +45,7 @@ export const Details = () => {
 
   return (
     <>
+      {}
       <section>
         <div className={`${styles.container} ${styles.flex}`}>
           <div className={styles.left}>
